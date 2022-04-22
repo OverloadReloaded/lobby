@@ -1,0 +1,5 @@
+name: Lobby
+author: FafMio
+version: 0.0.1-BETA
+main: net.overload.lobby.LobbyPlugin
+depend: [ProtocolLib, PacketWrapper, Commons]
