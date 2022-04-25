@@ -2,6 +2,8 @@ package net.overload.lobby;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.GsonBuilder;
@@ -15,6 +17,7 @@ import net.overload.commons.logger.Logger;
 import net.overload.commons.server.MinecraftServerInfo;
 import net.overload.commons.server.MinecraftServerState;
 import net.overload.commons.server.MinecraftServerType;
+import net.overload.lobby.events.PlayerConnectionsEvents;
 import redis.clients.jedis.JedisPubSub;
 
 public class LobbyPlugin extends JavaPlugin {
@@ -41,7 +44,7 @@ private static LobbyPlugin instance;
 		instance = this;
 		log.send(LogLevel.SUCCESS, "Enabled Lobby plugin !");
 		
-		conenctRedis();
+		connectRedis();
 		database = CommonsPluginBukkit.get().database;
 		config = CommonsPluginBukkit.get().config;
 		
@@ -62,7 +65,7 @@ private static LobbyPlugin instance;
 	 * Custom functions
 	 */
 	
-	public void conenctRedis() {
+	public void connectRedis() {
 		redis = CommonsPluginBukkit.get().redis;
 		new Thread(new Runnable() {
 			@Override
@@ -94,6 +97,12 @@ private static LobbyPlugin instance;
 				redis.getJedis().subscribe(pubsub, new String[] { "toLobbies", "toLobbiesUpdates" });
 			}
 		}).start();
+	}
+	
+	public void registerListeners() {
+		PluginManager pluginManager = Bukkit.getPluginManager();
+		
+		pluginManager.registerEvents(new PlayerConnectionsEvents(), this);
 	}
 
 	
